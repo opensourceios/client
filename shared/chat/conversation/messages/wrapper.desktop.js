@@ -4,27 +4,9 @@ import shallowEqual from 'shallowequal'
 import {Avatar, Icon, Text} from '../../../common-adapters'
 import {globalStyles, globalMargins, globalColors} from '../../../styles'
 import {withHandlers} from 'recompose'
+import {marginColor, colorForAuthor} from './shared'
 
 import type {Props} from './wrapper'
-
-const marginColor = (user: string, you: string, followingMap: FollowingMap, metaDataMap: MetaDataMap) => {
-  if (user === you) {
-    return globalColors.white
-  } else {
-    if (metaDataMap.get(user, Map()).get('brokenTracker', false)) {
-      return globalColors.red
-    }
-    return followingMap[user] ? globalColors.green2 : globalColors.blue
-  }
-}
-
-const colorForAuthor = (user: string, you: string, followingMap: FollowingMap, metaDataMap: MetaDataMap) => {
-  if (user === you) {
-    return globalColors.black_75
-  } else {
-    return marginColor(user, you, followingMap, metaDataMap)
-  }
-}
 
 const Retry = ({onRetry}: {onRetry: () => void}) => (
   <div>
