@@ -1,27 +1,11 @@
 // @flow
-import * as Constants from '../../../constants/chat'
 import React, {PureComponent} from 'react'
 import shallowEqual from 'shallowequal'
 import {Avatar, Icon, Text} from '../../../common-adapters'
-import {Map} from 'immutable'
 import {globalStyles, globalMargins, globalColors} from '../../../styles'
 import {withHandlers} from 'recompose'
 
-import type {FollowingMap, MetaDataMap} from '../../../constants/chat'
-
-type Props = {
-  includeHeader: boolean,
-  isFirstNewMessage: boolean,
-  onRetry: () => void,
-  onAction: (message: Constants.ServerMessage, event: any) => void,
-  style: Object,
-  isSelected: boolean,
-  children: React$Element<*>,
-  message: Constants.TextMessage | Constants.AttachmentMessage,
-  you: string,
-  followingMap: FollowingMap,
-  metaDataMap: MetaDataMap,
-}
+import type {Props} from './wrapper'
 
 const marginColor = (user: string, you: string, followingMap: FollowingMap, metaDataMap: MetaDataMap) => {
   if (user === you) {
@@ -52,7 +36,7 @@ const Retry = ({onRetry}: {onRetry: () => void}) => (
 
 type MessageProps = Props & {onIconClick: (event: any) => void}
 
-class _MessageComponent extends PureComponent<void, MessageProps, void> {
+class MessageWrapper extends PureComponent<void, MessageProps, void> {
   shouldComponentUpdate (nextProps: MessageProps) {
     return !shallowEqual(this.props, nextProps, (obj, oth, key) => {
       if (key === 'style') {
@@ -157,4 +141,4 @@ export default withHandlers({
   onRetry: (props: Props) => () => {
     props.message.outboxID && props.onRetry(props.message.outboxID)
   },
-})(_MessageComponent)
+})(MessageWrapper)
