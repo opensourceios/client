@@ -98,11 +98,15 @@ release_prerelease() {
   export AWS_ACCESS_KEY="$(grep access_key ~/.s3cfg | awk '{print $3}')"
   export AWS_SECRET_KEY="$(grep secret_key ~/.s3cfg | awk '{print $3}')"
 
-  # Upload both repos to S3.
+  # Upload both repos to S3. We don't use the --delete-removed flag, because
+  # clients with cached repo data might try to fetch older binaries, and we
+  # prefer to let them do that rather than giving them nasty errors. They
+  # should eventually get the latest stuff when they run the equivalent of
+  # `apt-get update`. See https://github.com/keybase/keybase-issues/issues/2816.
   echo Syncing the deb repo...
-  s3cmd sync --add-header="Cache-Control:max-age=60" --delete-removed "$build_dir/deb_repo/repo/" "s3://$BUCKET_NAME/deb/"
+  s3cmd sync --add-header="Cache-Control:max-age=60" "$build_dir/deb_repo/repo/" "s3://$BUCKET_NAME/deb/"
   echo Syncing the rpm repo...
-  s3cmd sync --add-header="Cache-Control:max-age=60" --delete-removed "$build_dir/rpm_repo/repo/" "s3://$BUCKET_NAME/rpm/"
+  s3cmd sync --add-header="Cache-Control:max-age=60" "$build_dir/rpm_repo/repo/" "s3://$BUCKET_NAME/rpm/"
 
   # For each .deb and .rpm file we just uploaded, unset the Cache-Control
   # header (because these files are large, and they have versioned names), and
